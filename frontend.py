@@ -3,7 +3,12 @@ import streamlit as st
 from datetime import datetime
 from langchain_core.messages import HumanMessage
 from graph import get_app
-app = get_app()
+
+@st.cache_resource
+def load_app():
+    return get_app()
+
+app = load_app()
 
 st.set_page_config(
     page_title="AI Travel Booking System",
