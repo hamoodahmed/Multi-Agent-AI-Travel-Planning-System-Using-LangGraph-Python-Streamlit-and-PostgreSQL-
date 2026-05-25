@@ -9,6 +9,8 @@ from tools.tavily_tool import tavily_search
 from tools.flight_tool import search_flights
 from dotenv import load_dotenv
 from typing import TypedDict, Annotated
+# Import dict_row from psycopg.rows
+from psycopg.rows import dict_row
 import operator
 
 load_dotenv()
@@ -54,7 +56,13 @@ def get_app():
     graph.add_edge("itinerary_agent", "final_agent")
     graph.add_edge("final_agent", END)
 
-    _conn = psycopg.connect(DATABASE_URL, autocommit=True)
-    checkpointer = PostgresSaver(_conn)
+# Connection with all required parameters
+_conn = psycopg.connect(
+    DATABASE_URL,
+    autocommit=True,
+    row_factory=dict_row
+)
+checkpointer = PostgresSaver(_conn)
+
     checkpointer.setup()
     return graph.compile(checkpointer=checkpointer)
